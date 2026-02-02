@@ -2,7 +2,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import app from "../src/app.js"
-const PORT = process.env.PORT || 5000;
+import { startCleanup } from "./cron/cleanup.js";
+
+startCleanup();
+
+const PORT = process.env.BASE_URL.split(":")[2] || 8000;
 
 app.listen(PORT, () => {
   console.log(`Auth Server running on port ${PORT} `);

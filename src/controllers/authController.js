@@ -12,7 +12,7 @@ export const signup = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ msg: "User already exists ❌" });
+      return res.status(400).json({ msg: "User already exists " });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,13 +48,13 @@ export const login = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials ❌" });
+      return res.status(400).json({ msg: "Invalid credentials " });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials ❌" });
+      return res.status(400).json({ msg: "Invalid credentials " });
     }
 
     const token = jwt.sign(

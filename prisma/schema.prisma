@@ -38,8 +38,6 @@ model Transfer {
 
   expiresAt  DateTime
 
-  recoverable Boolean @default(false)
-
   files      File[]
 
   recipients TransferRecipient[]
