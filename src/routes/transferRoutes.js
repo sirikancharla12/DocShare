@@ -1,9 +1,10 @@
 import express from "express";
-import { getTransferBySlug } from "../controllers/transferController";
+import { accessTransfer, getTransferBySlug } from "../controllers/transferController";
 
 const router = express.Router();
 
 router.get("/:slug", getTransferBySlug);
+router.get("/:slug/access",accessTransfer)
 
 
 export default router;
