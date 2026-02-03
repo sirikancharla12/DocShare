@@ -28,8 +28,6 @@ export const downloadFile = async (req, res) => {
   //pipe connects all the chunks and sends to client without loading everything in memory
   response.data.pipe(res);
 
-
-
 };
 
 export const previewFile = async (req, res) => {
