@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+
+  transfers Transfer[]
+
+  createdAt DateTime @default(now())
+}
+
+
+model Transfer {
+  id        String   @id @default(uuid())
+
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+
+  transferType TransferType @default(LINK)
+
+  linkSlug   String   @unique
+
+  title      String?
+  message    String?
+
+  accessType AccessType @default(PUBLIC)
+
+  passwordHash String?
+
+  expiresAt  DateTime
+
+  files      File[]
+
+  recipients TransferRecipient[]
+
+  createdAt  DateTime @default(now())
+}
+
+
+model TransferRecipient {
+  id         String   @id @default(uuid())
+  email      String
+
+  transferId String
+  transfer   Transfer @relation(fields: [transferId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
+
+
+model File {
+  id          String   @id @default(uuid())
+
+  fileUrl     String
+
+  publicId    String
+
+  fileName    String
+  fileSize    Int
+
+  transferId  String
+  transfer    Transfer @relation(fields: [transferId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+
+
+enum AccessType {
+  PUBLIC
+  TRACKED
+  RESTRICTED
+}
+
+enum TransferType {
+  LINK
+  EMAIL
+}
