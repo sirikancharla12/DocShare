@@ -1,10 +1,40 @@
+import { Plus } from 'lucide-react';
+
 const Form = () => {
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center ">
-      
+
       <div className="bg-white w-[360px] rounded-2xl p-4 shadow-lg">
 
         <form className="flex flex-col gap-4 text-sm">
+
+          <div className="grid grid-cols-2 gap-1">
+            <div className=" bg-[#e0eaff] p-4 justify-center items-center flex rounded-xl">
+
+              <div className='flex flex-col items-center gap-2 h-15'>
+                <div className='bg-blue-500  rounded-full p-2 text-white'>
+                  <Plus />
+
+                </div>
+                <div>
+                  add files
+                </div>
+              </div>
+
+            </div>
+            <div className="bg-[#e0eaff] p-4 justify-center items-center flex  rounded-xl">
+
+              <div className='flex flex-col items-center gap-2 h-15'>
+                <div className='bg-blue-500 rounded-full p-2 text-white '>
+                  <Plus />
+
+                </div>
+                <div>
+                  add folder
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="flex flex-col border-b border-gray-300 pb-2">
             <label className="text-gray-500">Your email</label>
@@ -43,7 +73,7 @@ const Form = () => {
               <option value="">60 days</option>
               <option value="">1 year</option>
               <option value="">Keep forever</option>
-           
+
             </select>
 
             <button
