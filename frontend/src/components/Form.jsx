@@ -1,10 +1,37 @@
 import { Plus } from 'lucide-react';
+import { useRef } from 'react';
 
 const Form = () => {
+
+  const fileInputRef = useRef(null);
+  const folderInputRef = useRef(null);
+
+  const handleFileClick = () => {
+    console.log("File picked");
+    fileInputRef.current.click();
+  }
+
+  const handleFolderClick = () => {
+    folderInputRef.current.click();
+  }
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+
+    for (const file of files) {
+      console.log(file.name);
+    }
+
+    e.target.value = null;
+  };
+
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center ">
 
       <div className="bg-white w-[360px] rounded-2xl p-4 shadow-lg">
+
+        <input type="file" multiple className='hidden' ref={fileInputRef} onChange={handleFileChange} />
+        <input type="file" webkitdirectory="true" directory="" className='hidden' ref={folderInputRef} onChange={handleFileChange} />
 
         <form className="flex flex-col gap-4 text-sm">
 
@@ -12,10 +39,12 @@ const Form = () => {
             <div className=" bg-[#e0eaff] p-4 justify-center items-center flex rounded-xl">
 
               <div className='flex flex-col items-center gap-2 h-15'>
-                <div className='bg-blue-500  rounded-full p-2 text-white'>
+                <button className='bg-blue-500  rounded-full p-2 text-white'
+                  type='button'
+                  onClick={handleFileClick}>
                   <Plus />
 
-                </div>
+                </button>
                 <div>
                   add files
                 </div>
@@ -25,10 +54,12 @@ const Form = () => {
             <div className="bg-[#e0eaff] p-4 justify-center items-center flex  rounded-xl">
 
               <div className='flex flex-col items-center gap-2 h-15'>
-                <div className='bg-blue-500 rounded-full p-2 text-white '>
+                <button className='bg-blue-500 rounded-full p-2 text-white '
+                  type='button'
+                  onClick={handleFolderClick}>
                   <Plus />
 
-                </div>
+                </button>
                 <div>
                   add folder
                 </div>
