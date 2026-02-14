@@ -10,7 +10,6 @@ const Form = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [folderFiles, setFolderFiles] = useState([]);
 
-
   const fileInputRef = useRef(null);
   const folderInputRef = useRef(null);
 
@@ -23,39 +22,64 @@ const Form = () => {
   };
 
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
+    const selectedFiles = [...e.target.files];
 
-    setuploaded(true);
-    setFiles(prev => [...prev, ...selectedFiles]);
 
-    if (selectedFiles.length === 1) {
-      setTitle(selectedFiles[0].name);
-    } else {
-      setTitle(`${selectedFiles.length} files`);
+    const uniqueFiles = selectedFiles.filter(f => !isDuplicate(f, files));
+
+    if (uniqueFiles.length > 0) {
+      setuploaded(true);
+      setFiles(prev => [...prev, ...uniqueFiles]);
+    }
+    else {
+      alert("Files already added");
     }
 
-    selectedFiles.forEach(f => console.log(f.name));
+
+    if (uniqueFiles.length === 1) {
+      setTitle(uniqueFiles[0].name);
+    } else {
+      setTitle(`${uniqueFiles.length} files`);
+    }
+
+    uniqueFiles.forEach(f => console.log(f.name));
 
     e.target.value = null;
   };
 
   const handleFolderChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
+    const selectedFiles = [...e.target.files];
     if (!selectedFiles.length) return;
 
     const folderName =
       selectedFiles[0].webkitRelativePath.split("/")[0];
 
+    if (isFolderDuplicate(folderName, folders)) {
+      alert("Folder already added");
+      e.target.value = null;
+      return;
+    }
+
+    const uniqueFolderFiles = selectedFiles.filter(
+      f => !isDuplicate(f, folderFiles)
+    );
+
+    if (uniqueFolderFiles.length === 0) {
+      alert("Folder files already added");
+      e.target.value = null;
+      return;
+    }
+
     setuploaded(true);
 
-    setFolderFiles(prev => [...prev, ...selectedFiles]);
+    setFolderFiles(prev => [...prev, ...uniqueFolderFiles]);
 
     setFolders(prev => [
       ...prev,
       {
         name: folderName,
-        count: selectedFiles.length,
-        size: selectedFiles.reduce((a, f) => a + f.size, 0)
+        count: uniqueFolderFiles.length,
+        size: uniqueFolderFiles.reduce((a, f) => a + f.size, 0)
       }
     ]);
 
@@ -63,7 +87,6 @@ const Form = () => {
 
     e.target.value = null;
   };
-
 
 
   const formatSize = (bytes) => {
@@ -79,14 +102,21 @@ const Form = () => {
     return extension;
   }
 
+  const isDuplicate = (file, existingFiles) =>
+    existingFiles.some(
+      f => f.name === file.name && f.size === file.size
+    );
+
+  const isFolderDuplicate = (folder, existingFolders) =>
+    existingFolders.some(
+      f => f.name === folder.name && f.size === folder.size && f.count === folder.count
+    );
+
+
   const fileCount = files.length;
   const folderCount = folders.length;
 
   const totalItems = fileCount + folderCount;
-
-
-
-
 
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center ">
