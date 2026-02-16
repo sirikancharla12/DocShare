@@ -1,5 +1,6 @@
 import { Check, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
+import axios from 'axios';
 
 const Form = () => {
 
@@ -9,9 +10,14 @@ const Form = () => {
   const [title, setTitle] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [folderFiles, setFolderFiles] = useState([]);
+  const [expiry, setExpiry] = useState(1);
+  const [message, setMessage] = useState("");
+
 
   const fileInputRef = useRef(null);
   const folderInputRef = useRef(null);
+
+
 
   const handleFileClick = () => {
     fileInputRef.current.click();
@@ -109,8 +115,8 @@ const Form = () => {
 
   const isFolderDuplicate = (folder, existingFolders) =>
     existingFolders.some(
-      f => f.name === folder.name && f.size === folder.size && f.count === folder.count
-    );
+      f => f.name === folder.name);
+
 
 
   const fileCount = files.length;
@@ -118,6 +124,57 @@ const Form = () => {
 
   const totalItems = fileCount + folderCount;
 
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (files.length === 0 && folderFiles.length === 0) {
+      alert("No files selected");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      files.forEach(file => {
+        formData.append("files", file);
+      });
+
+      folderFiles.forEach(file => {
+        formData.append("files", file);
+      });
+
+
+      formData.append("title", title);
+      formData.append("message", "");
+      formData.append("transferType", "LINK"); // or EMAIL
+      formData.append("accessType", "PUBLIC"); // or RESTRICTED
+      formData.append("expiryDays", 1);
+
+      const res = await axios.post(
+        "http://localhost:5000/api/transfers/create",
+        formData,
+        { withCredentials: true }
+      );
+
+
+
+      const data = res.data;
+
+      if (res.status === 200) {
+        console.log("Transfer created successfully. Link: " + data.shareLink);
+      } else {
+        alert("Error creating transfer: " + data.msg);
+      }
+
+
+
+    } catch (err) {
+  console.error(err.response?.data || err.message);
+  alert(err.response?.data?.error || err.message);
+}
+
+  }
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center ">
 
@@ -126,7 +183,7 @@ const Form = () => {
         <input type="file" multiple className='hidden' ref={fileInputRef} onChange={handleFileChange} />
         <input type="file" webkitdirectory="" directory="" className='hidden' ref={folderInputRef} onChange={handleFolderChange} />
 
-        <form className="flex flex-col gap-4 text-sm">
+        <form className="flex flex-col gap-4 text-sm" onSubmit={handleSubmit}>
 
           {!uploaded && (<div className="grid grid-cols-2 gap-1">
             <div className=" bg-[#e0eaff] p-4 justify-center items-center flex rounded-xl">
@@ -268,6 +325,8 @@ const Form = () => {
             <label className="text-gray-500">Message</label>
             <input
               type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               className="bg-transparent outline-none text-gray-800"
             />
           </div>
@@ -276,6 +335,8 @@ const Form = () => {
             <select
               type="button"
               className="border border-gray-300 rounded-lg px-4 py-2 text-blue-600 font-medium shadow-sm"
+              value={expiry}
+  onChange={(e) => setExpiry(e.target.value)}
             >
               <option value="">1 day</option>
               <option value="">3 days</option>
@@ -307,5 +368,6 @@ const Form = () => {
     </div>
   );
 };
+
 
 export default Form;
