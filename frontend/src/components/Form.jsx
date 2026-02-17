@@ -176,9 +176,9 @@ const Form = () => {
 
   }
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center ">
+    <div className="bg-neutral-900 flex items-center justify-center ">
 
-      <div className="bg-white w-[360px] rounded-2xl p-4 shadow-lg">
+      <div className="bg-white w-[300px] rounded-2xl p-3 shadow-lg">
 
         <input type="file" multiple className='hidden' ref={fileInputRef} onChange={handleFileChange} />
         <input type="file" webkitdirectory="" directory="" className='hidden' ref={folderInputRef} onChange={handleFolderChange} />
